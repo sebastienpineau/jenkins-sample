@@ -7,6 +7,14 @@ node () {
 	stage ('App-IC - Checkout') {
  	 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'id-git', url: 'https://github.com/sebastienpineau/jenkins-sample.git']]]) 
 	}
+	
+	stage ('Quality check'){
+	 withSonarQubeEnv('Sonar'){
+		bat"mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=sebastienpineau_jenkinsdemo"
+	 }
+	}
+	
+	
 	stage ('App-IC - Build') {
  			// Maven build step
 	withMaven(maven: 'maven') { 
